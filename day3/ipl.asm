@@ -31,10 +31,33 @@
 	
 init:
 	MOV		AX, 0
+    MOV		SS, AX
+	MOV		SP, 0x7c00	
+	MOV		DS, AX
 	MOV		ES, AX
 	
+	MOV		SI, msg
+
+show_msg:
+	MOV		AL, [SI]
+	INC		SI
+	CMP		AL, 0
+	JE	    fin	
+	MOV		AH, 0x0e
+	MOV		BX, 15
+	INT		0x10
+	JMP		show_msg
 
 ; 结束运行
 fin:
 	HLT
 	JMP		fin
+
+msg:
+	DB		0x0a, 0x0a
+	DB		"welcome play light os!"
+	DB		0x0a
+	DB		0
+	
+	TIMES	0x1fe-($-$$) DB	0x00
+	DW 		0xAA55
