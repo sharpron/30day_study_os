@@ -1,0 +1,48 @@
+     1                                  
+     2                                  	ORG		0x8200
+     3                                  
+     4 00000000 BD0090                  	MOV		BP, 0x9000
+     5 00000003 89EC                    	MOV		SP, BP
+     6                                  
+     7 00000005 FA                      	CLI
+     8 00000006 0F0116[4500]            	LGDT	[gdt_descriptor]
+     9                                  ; 进入保护模式
+    10                                  	
+    11 0000000B 0F20C0                  	MOV		EAX, CR0
+    12 0000000E 6683C801                	OR		EAX, 0x1
+    13 00000012 0F22C0                  	MOV		CR0, EAX
+    14 00000015 EA[1A00]0800            	JMP		0x8:init_pm
+    15                                  
+    16                                  [BITS	32]
+    17                                  init_pm:
+    18 0000001A 66B81000                	MOV		AX, 0x10
+    19 0000001E 8ED8                    	MOV		DS, AX
+    20 00000020 8ED0                    	MOV		SS, AX
+    21 00000022 8EC0                    	MOV		ES, AX
+    22 00000024 8EE0                    	MOV		FS, AX
+    23 00000026 8EE8                    	MOV		GS, AX
+    24 00000028 E81E000000              	CALL	entry
+    25                                  
+    26                                  [BITS	16]
+    27                                  GDT:
+    28                                  ; null	:
+    29 0000002D 00000000                	DD		0x00
+    30 00000031 00000000                	DD		0x00
+    31                                  ; code	:
+    32 00000035 FFFF                    	DW		0xFFFF
+    33 00000037 0000                    	DW		0x00
+    34 00000039 00                      	DB		0x00
+    35 0000003A 9A                      	DB		0b10011010
+    36 0000003B CF                      	DB		0b11001111
+    37 0000003C 00                      	DB		0x00
+    38                                  ; data	:
+    39 0000003D FFFF                    	DW		0xFFFF
+    40 0000003F 0000                    	DW		0x0000
+    41 00000041 00                      	DB		0x00
+    42 00000042 92                      	DB		0b10010010
+    43 00000043 CF                      	DB		0b11001111
+    44 00000044 00                      	DB		0x00
+    45                                  gdt_descriptor:
+    46 00000045 1700                    	DW		$-GDT-1
+    47 00000047 [2D000000]              	DD		GDT
+    48                                  entry:
