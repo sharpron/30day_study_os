@@ -10,8 +10,7 @@ bridge:
 boot:
 	i386-elf-gcc -ffreestanding -c boot.c -o boot.o
 kernel: bridge boot
-	i386-elf-ld bridge.o boot.o -o kernel.elf
-	i386-elf-objcopy -R .note -R .comment -S -O binary kernel.elf kernel.bin
+	i386-elf-ld -Ttext 8400 bridge.o boot.o -o kernel.bin --oformat binary
 
 image: ipl head kernel
 	cat ipl.bin head.bin kernel.bin > lightos.img
@@ -19,4 +18,4 @@ run: image
 	qemu-system-i386 -fda lightos.img -boot a
 clean:
 	rm -f ipl.bin head.bin kernel.bin lightos.img
-	rm -f bridge.o boot.o kernel.elf
+	rm -f bridge.o boot.o
