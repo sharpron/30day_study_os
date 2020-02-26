@@ -22,8 +22,12 @@ if [[ $# -eq 1 ]]; then
 		fi
 		
 		line=${line//./0}
+		line=${line//\*/1}
+		line=$( echo $line | rev )
+				
+		
 	
-		echo '\tDB	 0b'${line//\*/1} >> $outfile
+		echo '\tDB	 0b'$line  >> $outfile
 	done < $file	
 	
 	echo 'finish compile.'

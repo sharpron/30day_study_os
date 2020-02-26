@@ -31,6 +31,6 @@ run:
 	make img
 	qemu-system-i386 -fda lightos.img -boot a
 clean:
-#	rm -f ipl.bin head.bin kernel.bin lightos.img
-#	rm -f bridge.o boot.o
-#	rm -f font.o font.asm
+	rm -f ipl.bin head.bin kernel.bin lightos.img
+	rm -f bridge.o boot.o
+	rm -f font.o font.asm

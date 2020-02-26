@@ -50,8 +50,8 @@ void fillrect(unsigned char *vram, int xsize, unsigned char color,
 void draw_ui(unsigned char *vram, int scrnx, int scrny);
 void drawchar(unsigned char *vram, int scrnx, unsigned char color, int x, int y, char *font);
 
-void showchar(unsigned char *vram, int xsize,
-	unsigned char color, int x, int y, char c);
+void showchars(unsigned char *vram, int xsize,
+	unsigned char color, int x, int y, char *s);
 // 启动信息，和head.asm中对应
 struct BOOTINFO {
 	char cyls, leds, vmode, reserve;
@@ -88,23 +88,22 @@ void draw_ui(unsigned char *vram, int scrnx, int scrny) {
 	fillrect(vram, scrnx, COL_GREY, startx, starty, 
 		startx + dock_width, starty + dock_height);	
 	
-	unsigned char fonta[] = {
-		0x00, 0x18, 0x18, 0x24, 0x24, 
-		0x7e, 0x42, 0x42, 0xe7, 0x00
-	};
 		 
-	showchar(vram, scrnx, COL_RED, 0, 0, 'A');
+	showchars(vram, scrnx, COL_RED, 0, 0, "ABC 123");
 
 	
+	//showchars(vram, scrnx, COL_RED, 16, 64, s);
 }
 
 
-void showchar(unsigned char *vram, int xsize,
-	unsigned char color, int x, int y, char c) {
+void showchars(unsigned char *vram, int xsize,
+	unsigned char color, int x, int y, char *s) {
 	extern char font[4096];
-	// 申明引用字体
-//jj	extern char font[4096];
-	drawchar(vram, xsize, color, x, y, font + c * 16);
+	while (*s != 0x00) {
+		drawchar(vram, xsize, color, x, y, font + *s * 16);
+		s ++;
+		x += 8;
+	}
 }
 
 void drawchar(unsigned char *vram, int xsize, 
