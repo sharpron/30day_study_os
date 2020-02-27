@@ -1,0 +1,24 @@
+     1                                  [BITS	32]					; 使用32位模式
+     2                                  
+     3                                  
+     4                                  EXTERN		main
+     5                                  GLOBAL		_start
+     6                                  GLOBAL		io_hlt
+     7                                  
+     8                                  [SECTION	.text]
+     9                                  
+    10                                  ; 入口
+    11                                  _start:
+    12 00000000 66B81000                	mov ax, 0x10
+    13 00000004 8ED8                        mov ds, ax
+    14 00000006 8ED0                        mov ss, ax
+    15 00000008 8EC0                        mov es, ax
+    16 0000000A 8EE0                        mov fs, ax
+    17 0000000C 8EE8                        mov gs, ax
+    18 0000000E E8(00000000)            	CALL    main			; 调用c语言入口函数
+    19 00000013 C3                      	RET
+    20                                  
+    21                                  ; 让cpu休息的函数
+    22                                  io_hlt:	; void io_hlt(void);	
+    23 00000014 F4                      	HLT
+    24 00000015 C3                      	RET

@@ -52,6 +52,8 @@ void drawchar(unsigned char *vram, int scrnx, unsigned char color, int x, int y,
 
 void showchars(unsigned char *vram, int xsize,
 	unsigned char color, int x, int y, char *s);
+
+char* to_asc_chars(char *result, int number);
 // 启动信息，和head.asm中对应
 struct BOOTINFO {
 	char cyls, leds, vmode, reserve;
@@ -90,10 +92,14 @@ void draw_ui(unsigned char *vram, int scrnx, int scrny) {
 	
 		 
 	showchars(vram, scrnx, COL_RED, 0, 0, "ABC 123");
+	char result[40];
+
+	char *chars = to_asc_chars(result, 19562);
 
 	
-	//showchars(vram, scrnx, COL_RED, 16, 64, s);
+	showchars(vram, scrnx, COL_RED, 16, 64, result);
 }
+
 
 
 void showchars(unsigned char *vram, int xsize,
@@ -132,6 +138,32 @@ void fillrect(unsigned char *vram, int xsize, unsigned char color, int x0, int y
 			vram[y * xsize + x] = color; 
 		}
 	}
+}
+
+char* to_asc_chars(char *result, int number)
+{
+
+	char s[10];
+	int i = 0;
+	
+	int offset = 0;
+
+	if (number < 0) {
+		result[offset] = '-';
+		offset++;
+		number = -number;
+	}
+
+	for (; number > 0; i++) {
+		int mod = number % 10;
+		s[i] = (char) ('0' + mod);
+		number = number / 10;
+	}
+	
+	for (; i > 0; i--, offset++) {
+		result[offset] = s[i-1];
+	}
+	return result;
 }
 
 void init_palette() 
