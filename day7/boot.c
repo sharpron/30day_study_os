@@ -2,7 +2,6 @@
 author ron
 2020.02.25
 */
-
 // 定义调色板模式
 
 #define PALETTE_WRITE 0x3C8
@@ -20,10 +19,10 @@ author ron
 #define COL_GREY		8
 #define COL_D_RED		9
 #define COL_D_GREEN		10
-#define COL_D_YELLOW	11
+#define COL_D_YELLOW		11
 #define COL_D_CYAN		12
-#define COL_D_PURPLE	13
-#define COL_L_D_BLUE	14
+#define COL_D_PURPLE		13
+#define COL_L_D_BLUE		14
 #define COL_D_GREY		15
 
 // 休息
@@ -48,17 +47,22 @@ void fillrect(unsigned char *vram, int xsize, unsigned char color,
 	int x0, int y0, int x1, int y1);
 // 画ui
 void draw_ui(unsigned char *vram, int scrnx, int scrny);
+// 画一个字符
 void drawchar(unsigned char *vram, int scrnx, unsigned char color, int x, int y, char *font);
-
+// 显示多个字符
 void showchars(unsigned char *vram, int xsize,
 	unsigned char color, int x, int y, char *s);
+// 
+void to_asc_chars(char *result, int number);
 
-char* to_asc_chars(char *result, int number);
+void drawmouse(unsigned char *vram, int xsize,
+        unsigned char color, int x, int y);
+
 // 启动信息，和head.asm中对应
 struct BOOTINFO {
 	char cyls, leds, vmode, reserve;
 	short scrnx, scrny;
-	char *vram;
+	unsigned char *vram;
 };
 
 
@@ -90,11 +94,10 @@ void draw_ui(unsigned char *vram, int scrnx, int scrny) {
 	fillrect(vram, scrnx, COL_GREY, startx, starty, 
 		startx + dock_width, starty + dock_height);	
 	
-		 
-	showchars(vram, scrnx, COL_RED, 0, 0, "ABC 123");
+	showchars(vram, scrnx, COL_RED, 0, 0, "helloworld");
 	char result[40];
 
-	char *chars = to_asc_chars(result, 19562);
+	to_asc_chars(result, 19562);
 
 	
 	showchars(vram, scrnx, COL_RED, 16, 64, result);
@@ -112,10 +115,10 @@ void drawmouse(unsigned char *vram, int xsize,
 	};
 	
 	for (int i = 0; i < 4; i ++) {
-		char *line = mouse[i];
+		unsigned char *line = mouse[i];
 		for (int j = 0; j < 8; j++) {
 			if (line[j] == '*') {
-				vram[(y+i) * xsize + j] = color;
+				vram[(y+i) * xsize + x + j] = color;
 			}
 		}			
 	}		
@@ -161,7 +164,7 @@ void fillrect(unsigned char *vram, int xsize, unsigned char color, int x0, int y
 	}
 }
 
-char* to_asc_chars(char *result, int number)
+void to_asc_chars(char *result, int number)
 {
 
 	char s[10];
@@ -184,7 +187,6 @@ char* to_asc_chars(char *result, int number)
 	for (; i > 0; i--, offset++) {
 		result[offset] = s[i-1];
 	}
-	return result;
 }
 
 void init_palette() 
